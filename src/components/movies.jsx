@@ -5,6 +5,7 @@ import Like from '../components/common/like'
 import Pagination from './pagination';
 import ListGroup from './listgroup';
 import {paginate} from '../utils/paginate';
+import MoviesTable from './moviesTable';
 class Movies extends Component {
     state = { 
         movies:[],
@@ -53,34 +54,12 @@ class Movies extends Component {
             />
         </div>
         <div className="col">
-        <table className="table">
-           <p>Showing {filtered.length} In The Database</p>
-            <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>Genre</th>
-                    <th>Stock</th>
-                    <th>Rate</th>
-                    <th>Action</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                {
-                movies.map(movie=>(
-                    <tr key={movie._id}>
-                    <td>{movie.title}</td>
-                    <td>{movie.genre.name}</td>
-                    <td>{movie.numberInStock}</td>
-                    <td>{movie.dailyRentalRate}</td>
-                    <td><Like like={movie.liked} onClick={()=>this.handleClick(movie)}/></td>
-                    <td><button onClick={()=>this.handleDelete(movie)} className="btn btn-danger btn-sm">Delete</button></td>
-                </tr>
-
-                ))}
-                
-            </tbody>
-        </table>
+        <MoviesTable 
+            itemCount={filtered.length} 
+            movies={movies}
+            onLike={this.handleClick}
+            onDelete={this.handleDelete}
+        />
         <Pagination
             itemsCount={this.state.movies.length}
             pageSize={pageSize}
