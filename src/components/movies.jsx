@@ -6,8 +6,10 @@ import Pagination from './pagination';
 import ListGroup from './listgroup';
 import {paginate} from '../utils/paginate';
 import MoviesTable from './moviesTable';
+import TableHeader from './common/tableHeader'
 import _ from 'lodash'
 class Movies extends Component {
+    
     state = { 
         movies:[],
         genres:[],
@@ -39,17 +41,10 @@ class Movies extends Component {
          this.setState({selectedGenre:genre, currentPage:1});
          //console.log("Selected Genre", genre);
      }
-     handleSort=path=>{
+     handleSort=sortColumn=>{
         // this.setState({sortColumn:{path:path, order:'asc'}})
          //console.log("Path", path)
-        const sortColumn = {...this.state.sortColumn};
-            if(sortColumn.path === path)
-            sortColumn.order=sortColumn.order==="asc" ? "desc":"asc";
-            else{
-                sortColumn.path = path;
-                sortColumn.order="asc";
-
-            }
+       
         this.setState({sortColumn});
      }
     render() { 
@@ -73,6 +68,7 @@ class Movies extends Component {
         <div className="col">
         <MoviesTable 
             itemCount={filtered.length} 
+            sortColumn={sortColumn}
             movies={movies}
             onLike={this.handleClick}
             onDelete={this.handleDelete}
