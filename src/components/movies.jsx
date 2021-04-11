@@ -6,16 +6,18 @@ import Pagination from './pagination';
 import ListGroup from './listgroup';
 import {paginate} from '../utils/paginate';
 import MoviesTable from './moviesTable';
+import _ from 'lodash'
 class Movies extends Component {
     state = { 
         movies:[],
         genres:[],
-        pageSize:4
+        pageSize:4,
+        sortColumn:{path:'title', order:'asc'}
         //currentPage:1
         
      }
     componentDidMount(){
-        const genres=[{name:"All genres"},...getGenres()]
+        const genres=[{_id:"", name:"All genres"},...getGenres()]
         this.setState({movies:getMovies(), genres})
     }
      handleDelete(movie){
@@ -37,13 +39,28 @@ class Movies extends Component {
          this.setState({selectedGenre:genre, currentPage:1});
          //console.log("Selected Genre", genre);
      }
+     handleSort=path=>{
+        // this.setState({sortColumn:{path:path, order:'asc'}})
+         //console.log("Path", path)
+        const sortColumn = {...this.state.sortColumn};
+            if(sortColumn.path === path)
+            sortColumn.order=sortColumn.order==="asc" ? "desc":"asc";
+            else{
+                sortColumn.path = path;
+                sortColumn.order="asc";
+
+            }
+        this.setState({sortColumn});
+     }
     render() { 
         const{count}=this.state.movies.length;
-        const{pageSize, currentPage, movies:allMovies, selectedGenre }=this.state;
+        const{pageSize, currentPage, movies:allMovies, selectedGenre,sortColumn }=this.state;
         console.log("Count",count);
         if(this.state.movies.length===0) return <p>No Movie Available</p>;
        const filtered=selectedGenre && selectedGenre._id ? allMovies.filter(m=>m.genre._id===selectedGenre._id):allMovies;
-       const movies=paginate(filtered,currentPage,pageSize);
+       const sorted=_.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
+       //const movies=paginate(filtered,currentPage,pageSize);
+       const movies=paginate(sorted,currentPage,pageSize);
        return (
     <div className="row">
         <div className="col-2">
@@ -59,6 +76,7 @@ class Movies extends Component {
             movies={movies}
             onLike={this.handleClick}
             onDelete={this.handleDelete}
+            onSort={this.handleSort}
         />
         <Pagination
             itemsCount={this.state.movies.length}
